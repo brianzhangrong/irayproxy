@@ -10,89 +10,66 @@
 
 	<name>IrayProxy</name>
 	<description>iray proxy for irayCloud</description>
-
-
+  
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.13.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<spring-boot-admin.version>2.0.0</spring-boot-admin.version>
-		<spring-cloud.version>Finchley.RC2</spring-cloud.version>
-		<spring-boot.version>2.0.2.RELEASE</spring-boot.version>
+		<docker.image.prefix>springcloud</docker.image.prefix>
 	</properties>
 
 	<dependencies>
-	 	 <dependency>
-             <groupId>org.springframework.cloud</groupId>
-             <artifactId>spring-cloud-starter-eureka-server</artifactId>
-         </dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-config-server</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-config-monitor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+		</dependency>
+	<!-- 	<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>  -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>ch.qos.logback</groupId>
-		    <artifactId>logback-classic</artifactId>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
 		<dependency>
-		    <groupId>ch.qos.logback</groupId>
-		    <artifactId>logback-core</artifactId>
+		    <groupId>org.eclipse.jgit</groupId>
+		    <artifactId>org.eclipse.jgit</artifactId>
+		    <version>4.11.0.201803080745-r</version>
 		</dependency>
-		<dependency>
-	         <groupId>org.springframework.cloud</groupId>
-	         <artifactId>spring-cloud-config-server</artifactId>
-	    </dependency>
-       <dependency>
-	       <groupId>org.springframework.boot</groupId>
-	       <artifactId>spring-boot-starter-web</artifactId>
-	   </dependency>
-	   <dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-		</dependency>
+		
 	</dependencies>
-
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-			    <groupId>org.slf4j</groupId>
-			    <artifactId>slf4j-api</artifactId>
-			    <version>1.7.25</version>
-			</dependency>
-			<dependency>
-	            <groupId>org.springframework.boot</groupId>
-	            <artifactId>spring-boot-dependencies</artifactId>
-	            <version>${spring-boot.version}</version>
-	            <type>pom</type>
-	            <scope>import</scope>
-	        </dependency>
-			<dependency>
-			    <groupId>ch.qos.logback</groupId>
-			    <artifactId>logback-classic</artifactId>
-			    <version>1.2.3</version>
-			</dependency>
-			<dependency>
-			    <groupId>ch.qos.logback</groupId>
-			    <artifactId>logback-core</artifactId>
-			    <version>1.2.3</version>
-			</dependency>
-			<dependency>
-			    <groupId>org.springframework.cloud</groupId>
-			    <artifactId>spring-cloud-config-server</artifactId>
-			    <version>1.4.3.RELEASE</version>
-			</dependency>
-			<dependency>
-			    <groupId>org.springframework.cloud</groupId>
-			    <artifactId>spring-cloud-starter-eureka-server</artifactId>
-			    <version>1.4.4.RELEASE</version>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Camden.BUILD-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	
 
 	<build>
 		<plugins>
@@ -131,6 +108,15 @@
 	                </execution>  
 	            </executions>  
 	        </plugin>  
+	         <plugin> 
+	            <groupId>org.apache.maven.plugins</groupId> 
+	            <artifactId>maven-compiler-plugin</artifactId> 
+	            <version>2.0.2</version> 
+	            <configuration> 
+	                <source>1.8</source> 
+	                <target>1.8</target> 
+	            </configuration> 
+	        </plugin> 
 		</plugins>
 	</build>
 
