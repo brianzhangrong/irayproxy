@@ -11,7 +11,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableConfigServer
-@EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.ihomefnt.irayproxy"})
 public class IrayProxyApplication {
 
