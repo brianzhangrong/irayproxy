@@ -16,6 +16,6 @@ public class IrayProxyController {
 	
 	@RequestMapping(method=RequestMethod.GET,value="hello")
 	public String hello(){
-		return Joiner.on(",").join(properties.getServer());
+		return Joiner.on(",").join("result",properties.getServer());
 	}
 }
