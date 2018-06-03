@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Joiner;
 import com.ihomefnt.irayproxy.config.ServerListProperties;
+import com.ihomefnt.irayproxy.utils.IhomeConfigUtils;
 
 @RestController
 public class IrayProxyController {
@@ -16,6 +17,6 @@ public class IrayProxyController {
 	
 	@RequestMapping(method=RequestMethod.GET,value="hello")
 	public String hello(){
-		return Joiner.on(",").join("result",properties.getServer());
+		return Joiner.on(",").join(IhomeConfigUtils.getServerList());
 	}
 }

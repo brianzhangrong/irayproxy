@@ -14,9 +14,11 @@ import lombok.Data;
 
 
 @Configuration
-@ConfigurationProperties(prefix="iray")
 @RefreshScope
 @Data
 public class ServerListProperties {
-	List<String> server = Lists.newArrayList();
+	@Value("${iray.server}")
+	String  server;
+	@Value("${user}")
+	String user;
 }
