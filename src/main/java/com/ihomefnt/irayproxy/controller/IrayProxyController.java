@@ -21,7 +21,7 @@ public class IrayProxyController {
 	@Autowired
 	ServerListProperties properties;
 
-	@RequestMapping(method = RequestMethod.GET, value = "hello")
+	@RequestMapping(method = RequestMethod.GET, value = "irayCloud")
 	public String hello(HttpServletRequest request) throws UnsupportLoadBalanceException {
 		List<String> serverList = Lists.newArrayList();
 		IhomeConfigUtils.parseServeList(serverList);
