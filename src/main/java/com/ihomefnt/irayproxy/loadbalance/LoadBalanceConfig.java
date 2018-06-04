@@ -19,10 +19,14 @@ public class LoadBalanceConfig {
 			return (serverList) -> {
 				String server = null;
 				long now = index.get();
-				if (now >= serverList.size())
+				if (now >= serverList.size()) {
 					index.set(0);
-				server = serverList.get((int) index.get());
-				index.compareAndSet(now, now + 1);
+					now = 0;
+				}
+				server = serverList.get((int) now);
+				if (index.compareAndSet(now, now + 1)) {
+
+				}
 				return server;
 			};
 		} else if (LOADBALANCE_RANDOM.equals(method)) {
