@@ -78,7 +78,7 @@ public class IhomeConfigUtils {
 				log.info("configStr:{}", configStr);
 			}
 
-		}, 10 * 1000, 1000 * 30 * 60);
+		}, 10 * 1000, 1000 * 30);
 	}
 
 	public static void parseServeList(List<String> list) {
