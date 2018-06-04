@@ -53,14 +53,6 @@ public class IhomeConfigUtils {
 			.get().build();
 	private static Request envRequest = new Request.Builder().url(ENV_URL).header("Authorization", credential).get()
 			.build();
-	// static {
-	// try {
-	// Response response = client.newCall(envRequest).execute();
-	// response.close();
-	// } catch (IOException e) {
-	// log.error("init error:{}",ExceptionUtils.getStackTrace(e));
-	// }
-	// }
 	public final static String PROPERTY_NAME = "iray.server";
 	public final static String PROPERTY_LOADBALANCE_METHOD = "loadbalance.method";
 	public final static String PROPERTY_SPLIT_SYMBOL = ":";
@@ -78,7 +70,7 @@ public class IhomeConfigUtils {
 				log.info("configStr:{}", configStr);
 			}
 
-		}, 10 * 1000, 1000 * 30);
+		}, 5 * 1000, 1000 * 30);
 	}
 
 	public static void parseServeList(List<String> list) {
@@ -90,7 +82,6 @@ public class IhomeConfigUtils {
 	}
 
 	private static ParseConfigCallBack extractedLoadBalance(StringBuilder method) {
-		log.info("parse loadbalance:{}", method.toString());
 		return (propertyValueStr) -> {
 			if (propertyValueStr.contains(PROPERTY_LOADBALANCE_METHOD)) {
 				List<String> propertyValuePairList = Splitter.on(PROPERTY_SPLIT_SYMBOL).splitToList(propertyValueStr);
@@ -106,13 +97,15 @@ public class IhomeConfigUtils {
 	public static void commonParse(ParseConfigCallBack parseConfigCallBack) {
 		try {
 			if (StringUtils.isBlank(configStr)) {
-				Response response = client.newCall(configRequest).execute();
-				if (response.isSuccessful()) {
-					if (response.code() == HTTP_OK) {
-						configStr = response.body().string();
-						response.close();
-					} else {
-						log.info("get config code:{},", response.code());
+				synchronized (configRequest) {
+					Response response = client.newCall(configRequest).execute();
+					if (response.isSuccessful()) {
+						if (response.code() == HTTP_OK) {
+							configStr = response.body().string();
+							response.close();
+						} else {
+							log.info("get config code:{},", response.code());
+						}
 					}
 				}
 			}

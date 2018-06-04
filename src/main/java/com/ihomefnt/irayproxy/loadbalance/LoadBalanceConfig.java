@@ -48,7 +48,7 @@ public class LoadBalanceConfig {
 				return serverList.get(serverPos);
 			};
 		}
-		throw new UnsupportLoadBalanceException("unSupportLoadBalance");
+		throw new UnsupportLoadBalanceException("unSupportLoadBalance " + method);
 	}
 
 	public static String getRemoteIp(HttpServletRequest request) {

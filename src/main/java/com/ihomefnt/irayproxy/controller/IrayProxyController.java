@@ -20,7 +20,7 @@ public class IrayProxyController {
 	RateLimiter rateLimiter = RateLimiter.create(1000);
 
 	@RequestMapping(method = RequestMethod.GET, value = "irayCloud")
-	public String hello(HttpServletRequest request) throws UnsupportLoadBalanceException {
+	public String irayCloudProxy(HttpServletRequest request) throws UnsupportLoadBalanceException {
 		List<String> serverList = Lists.newArrayList();
 		IhomeConfigUtils.parseServeList(serverList);
 		StringBuilder method = new StringBuilder();
