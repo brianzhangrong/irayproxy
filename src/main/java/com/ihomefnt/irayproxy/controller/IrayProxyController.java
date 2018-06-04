@@ -22,6 +22,8 @@ public class IrayProxyController {
 	public String hello() {
 		List<String> serverList = Lists.newArrayList();
 		IhomeConfigUtils.parseServeList(serverList);
-		return Joiner.on(",").join(serverList);
+		StringBuilder method = new StringBuilder();
+		IhomeConfigUtils.parseLoadBalance(method);
+		return Joiner.on(",").join(serverList, ",", method.toString());
 	}
 }
