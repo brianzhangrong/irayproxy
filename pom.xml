@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.ihomefnt.irayproxy</groupId>
-	<artifactId>IrayProxy</artifactId>
+	<artifactId>irayproxy</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
@@ -167,6 +167,8 @@
 	            <artifactId>dockerfile-maven-plugin</artifactId>
 	            <version>1.3.6</version>
 	            <configuration>
+	           		<imageName>irayproxy</imageName>
+	           		<!-- <contextDirectory>META-INF</contextDirectory> -->
 	                <repository>${docker.image.prefix}/${project.artifactId}</repository>
 	                <buildArgs>
 	                    <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
