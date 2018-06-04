@@ -38,6 +38,9 @@ public class LoadBalanceConfig {
 				int hashCode = remoteIp.hashCode();
 				int serverListSize = serverList.size();
 				int serverPos = hashCode % serverListSize;
+				if (serverPos < 0) {
+					serverPos = 0 - serverPos;
+				}
 				return serverList.get(serverPos);
 			};
 		}

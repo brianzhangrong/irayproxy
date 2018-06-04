@@ -75,6 +75,7 @@ public class IhomeConfigUtils {
 			public void run() {
 				configStr = null;
 				commonParse(null);
+				log.info("configStr:{}", configStr);
 			}
 
 		}, 10 * 1000, 1000 * 30 * 60);
