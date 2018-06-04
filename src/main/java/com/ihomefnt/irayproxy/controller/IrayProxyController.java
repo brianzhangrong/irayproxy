@@ -17,7 +17,7 @@ import com.ihomefnt.irayproxy.utils.IhomeConfigUtils;
 @RestController
 public class IrayProxyController {
 
-	RateLimiter rateLimiter = RateLimiter.create(100);
+	RateLimiter rateLimiter = RateLimiter.create(1000);
 
 	@RequestMapping(method = RequestMethod.GET, value = "irayCloud")
 	public String hello(HttpServletRequest request) throws UnsupportLoadBalanceException {
