@@ -1,6 +1,8 @@
 package com.ihomefnt.irayproxy.utils;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +68,18 @@ public class IhomeConfigUtils {
 	public final static String CR = "\n";
 	public final static Integer HTTP_OK = 200;
 
+	static Timer timer = new Timer();
+	static String configStr;
+	static {
+		timer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				configStr = null;
+				commonParse(null);
+			}
+
+		}, 10 * 1000, 1000 * 30 * 60);
+	}
+
 	public static void parseServeList(List<String> list) {
 		commonParse(extractedIrayServer(list));
 	}
@@ -90,19 +104,23 @@ public class IhomeConfigUtils {
 
 	public static void commonParse(ParseConfigCallBack parseConfigCallBack) {
 		try {
-			Response response = client.newCall(configRequest).execute();
-			if (response.isSuccessful()) {
-				if (response.code() == HTTP_OK) {
-					String configStr = response.body().string();
-					List<String> propertyValueList = Splitter.on(CR).splitToList(configStr);
-					propertyValueList.forEach(propertyValueStr -> {
-						parseConfigCallBack.doParse(propertyValueStr);
-					});
-				} else {
-					log.info("get config code:{},", response.code());
+			if (StringUtils.isBlank(configStr)) {
+				Response response = client.newCall(configRequest).execute();
+				if (response.isSuccessful()) {
+					if (response.code() == HTTP_OK) {
+						configStr = response.body().string();
+						response.close();
+					} else {
+						log.info("get config code:{},", response.code());
+					}
 				}
-				response.close();
 			}
+			List<String> propertyValueList = Splitter.on(CR).splitToList(configStr);
+			propertyValueList.forEach(propertyValueStr -> {
+				if (parseConfigCallBack != null) {
+					parseConfigCallBack.doParse(propertyValueStr);
+				}
+			});
 
 		} catch (Exception e) {
 			log.error("query server config error:{}", ExceptionUtils.getStackTrace(e));
