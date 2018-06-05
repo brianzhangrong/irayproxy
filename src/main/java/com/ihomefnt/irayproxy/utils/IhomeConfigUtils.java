@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -59,6 +60,8 @@ public class IhomeConfigUtils implements InitializingBean {
 	 */
 	Request configRequest = new Request.Builder().url(CONFIG_URL).header("Authorization", credential).get().build();
 
+	AtomicBoolean init = new AtomicBoolean(false);
+
 	String configStr;
 	Timer timer = new Timer();
 
@@ -105,6 +108,8 @@ public class IhomeConfigUtils implements InitializingBean {
 						parseConfigCallBack.doParse(propertyValueStr);
 					}
 				});
+			} else {
+				log.warn("configStr is null:{}", configStr);
 			}
 		} catch (Exception e) {
 			log.error("query server config error:{}", ExceptionUtils.getStackTrace(e));
@@ -132,17 +137,19 @@ public class IhomeConfigUtils implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		try {
-			timer.scheduleAtFixedRate(new TimerTask() {
-				public void run() {
-					configStr = null;
-					commonParse(null);
-					log.warn("configStr:{}", configStr);
-				}
+		if (init.compareAndSet(false, true)) {
+			try {
+				timer.scheduleAtFixedRate(new TimerTask() {
+					public void run() {
+						configStr = null;
+						commonParse(null);
 
-			}, 1 * 1000, 1000 * 10);
-		} catch (Exception e) {
-			log.error("loop time error:{}", ExceptionUtils.getStackTrace(e));
+					}
+
+				}, 10 * 1000, 1000 * 10);
+			} catch (Exception e) {
+				log.error("loop time error:{}", ExceptionUtils.getStackTrace(e));
+			}
 		}
 	}
 
