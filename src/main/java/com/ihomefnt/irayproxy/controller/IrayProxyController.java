@@ -2,6 +2,7 @@ package com.ihomefnt.irayproxy.controller;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,13 +19,15 @@ import com.ihomefnt.irayproxy.utils.IhomeConfigUtils;
 public class IrayProxyController {
 
 	RateLimiter rateLimiter = RateLimiter.create(1000);
+	@Resource
+	IhomeConfigUtils ihomeConfigUtils;
 
 	@RequestMapping(method = RequestMethod.GET, value = "irayCloud")
 	public String irayCloudProxy(HttpServletRequest request) throws UnsupportLoadBalanceException {
 		List<String> serverList = Lists.newArrayList();
-		IhomeConfigUtils.parseServeList(serverList);
+		ihomeConfigUtils.parseServeList(serverList);
 		StringBuilder method = new StringBuilder();
-		IhomeConfigUtils.parseLoadBalance(method);
+		ihomeConfigUtils.parseLoadBalance(method);
 		if (rateLimiter.tryAcquire()) {
 			return LoadBalanceConfig.parseLoadBalanceConfig(method.toString(), request).select(serverList);
 		} else {

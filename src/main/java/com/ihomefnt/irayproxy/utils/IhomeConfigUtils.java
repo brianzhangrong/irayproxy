@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.annotation.Configuration;
 
 import com.google.common.base.Splitter;
 
@@ -17,7 +19,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 @Slf4j
-public class IhomeConfigUtils {
+@Configuration
+public class IhomeConfigUtils implements InitializingBean {
 	/**
 	 * 配置地址
 	 * 
@@ -44,45 +47,30 @@ public class IhomeConfigUtils {
 	/**
 	 * http client 基础配置
 	 */
-	static OkHttpClient client = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
+	OkHttpClient client = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
 			.readTimeout(60, TimeUnit.SECONDS).retryOnConnectionFailure(true).writeTimeout(1500, TimeUnit.MILLISECONDS)
 			.build();
 	/**
 	 * basic 认证
 	 */
-	static String credential = Credentials.basic(USERNAME, PASSWORD);
+	String credential = Credentials.basic(USERNAME, PASSWORD);
 	/**
 	 * request 认证头
 	 */
-	static Request configRequest = new Request.Builder().url(CONFIG_URL).header("Authorization", credential).get()
-			.build();
+	Request configRequest = new Request.Builder().url(CONFIG_URL).header("Authorization", credential).get().build();
 
-	static String configStr;
-	public static Timer timer = new Timer();
-	{
-		try {
-			timer.scheduleAtFixedRate(new TimerTask() {
-				public void run() {
-					configStr = null;
-					commonParse(null);
-					log.warn("configStr:{}", configStr);
-				}
+	String configStr;
+	Timer timer = new Timer();
 
-			}, 0, 1000 * 10);
-		} catch (Exception e) {
-			log.error("loop time error:{}", ExceptionUtils.getStackTrace(e));
-		}
-	}
-
-	public static void parseServeList(List<String> list) {
+	public void parseServeList(List<String> list) {
 		commonParse(extractedIrayServer(list));
 	}
 
-	public static void parseLoadBalance(StringBuilder method) {
+	public void parseLoadBalance(StringBuilder method) {
 		commonParse(extractedLoadBalance(method));
 	}
 
-	private static ParseConfigCallBack extractedLoadBalance(StringBuilder method) {
+	private ParseConfigCallBack extractedLoadBalance(StringBuilder method) {
 		return (propertyValueStr) -> {
 			if (propertyValueStr.contains(PROPERTY_LOADBALANCE_METHOD)) {
 				List<String> propertyValuePairList = Splitter.on(PROPERTY_SPLIT_SYMBOL).splitToList(propertyValueStr);
@@ -95,7 +83,7 @@ public class IhomeConfigUtils {
 		};
 	}
 
-	public static void commonParse(ParseConfigCallBack parseConfigCallBack) {
+	public void commonParse(ParseConfigCallBack parseConfigCallBack) {
 		try {
 			if (StringUtils.isBlank(configStr)) {
 				synchronized (configRequest) {
@@ -140,6 +128,22 @@ public class IhomeConfigUtils {
 	@FunctionalInterface
 	public interface ParseConfigCallBack {
 		void doParse(String t);
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		try {
+			timer.scheduleAtFixedRate(new TimerTask() {
+				public void run() {
+					configStr = null;
+					commonParse(null);
+					log.warn("configStr:{}", configStr);
+				}
+
+			}, 1 * 1000, 1000 * 10);
+		} catch (Exception e) {
+			log.error("loop time error:{}", ExceptionUtils.getStackTrace(e));
+		}
 	}
 
 }
